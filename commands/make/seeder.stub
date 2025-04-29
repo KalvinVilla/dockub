@@ -1,0 +1,26 @@
+{{{
+  exports({
+    to: app.seederPath(entity.path, seeder.fileName)
+  })
+}}}
+import { DB } from '#types/db'
+import hash from '@adonisjs/core/services/hash'
+import { Kysely } from 'kysely'
+
+import { v7 as randomUUID } from 'uuid'
+
+const tableName = '{{ seeder.tableName }}'
+
+export default async function seed(db: Kysely<DB>) {
+
+    /*
+    await db
+    .insertInto(tableName)
+    .values({
+
+    })
+    .returning('id')
+    .executeTakeFirstOrThrow()
+    */
+
+}
