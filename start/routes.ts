@@ -12,6 +12,9 @@ import { middleware } from '#start/kernel'
 
 const LoginController = () => import('#auth/controllers/login_controller')
 const LogoutController = () => import('#auth/controllers/logout_controller')
+const HomeController = () => import('#user/controllers/home_controller')
+
+const ContainerController = () => import('#container/controllers/container_controller')
 
 router
   .group(() => {
@@ -23,6 +26,9 @@ router
 router
   .group(() => {
     router.post('logout', [LogoutController, 'execute']).as('auth.logout')
-    router.on('/').renderInertia('home')
+    router.get('/', [HomeController, 'render']).as('home')
+
+    router.post('container/:id/start', [ContainerController, 'start']).as('container.start')
+    router.post('container/:id/stop', [ContainerController, 'stop']).as('container.stop')
   })
   .middleware(middleware.auth())

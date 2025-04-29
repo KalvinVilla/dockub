@@ -1,3 +1,23 @@
+<script setup lang="ts">
+import { Head } from '@inertiajs/vue3'
+import { useForm } from '@inertiajs/vue3'
+
+const form = useForm({
+  name: '',
+  password: '',
+})
+
+const submit = () => {
+  form.post('/login', {
+    onFinish: () => form.reset(),
+    onError: (errors) => {
+      console.error(errors)
+    },
+  })
+}
+</script>
+
+
 <template>
   <Head title="Login" />
   <div class="container mx-auto">
@@ -29,23 +49,3 @@
     </form>
   </div>
 </template>
-
-<script setup lang="ts">
-import { Head } from '@inertiajs/vue3'
-import { ref } from 'vue'
-import { useForm } from '@inertiajs/vue3'
-
-const form = useForm({
-  name: '',
-  password: '',
-})
-
-const submit = () => {
-  form.post('/login', {
-    onFinish: () => form.reset(),
-    onError: (errors) => {
-      console.error(errors)
-    },
-  })
-}
-</script>
