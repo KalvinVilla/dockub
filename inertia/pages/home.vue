@@ -6,13 +6,12 @@ import { useForm } from '@inertiajs/vue3'
 const form = useForm()
 
 const submit = () => {
-    form.post('/logout', {
-        onError: (errors) => {
-            console.error(errors)
-        }
-    })
+  form.post('/logout', {
+    onError: (errors) => {
+      console.error(errors)
+    },
+  })
 }
-
 </script>
 <template>
   <Head title="Homepage" />
