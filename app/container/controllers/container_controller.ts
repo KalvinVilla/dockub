@@ -8,10 +8,8 @@ export default class ContainerController {
 
   async start({ response, params }: HttpContext) {
     const id = params.id
-
     await startContainer(id)
-
-    return response.redirect().toPath('/')
+    return response.redirect().back()
   }
 
   async stop({ response, params }: HttpContext) {
@@ -19,6 +17,6 @@ export default class ContainerController {
 
     await stopContainer(id)
 
-    return response.redirect().toPath('/')
+    return response.redirect().back()
   }
 }
