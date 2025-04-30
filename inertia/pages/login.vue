@@ -17,7 +17,6 @@ const submit = () => {
 }
 </script>
 
-
 <template>
   <Head title="Login" />
   <div class="container mx-auto">

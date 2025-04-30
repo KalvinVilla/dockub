@@ -25,7 +25,9 @@ const installApp = async () => {
 
 <template>
   <div v-if="showPrompt" class="fixed bottom-4 inset-x-0 flex justify-center z-50">
-    <div class="bg-white shadow-xl rounded-lg px-6 py-4 flex items-center space-x-4 border border-gray-300 animate-fade-in">
+    <div
+      class="bg-white shadow-xl rounded-lg px-6 py-4 flex items-center space-x-4 border border-gray-300 animate-fade-in"
+    >
       <div class="text-gray-800 font-medium">
         <span>Installer cette application ?</span>
       </div>

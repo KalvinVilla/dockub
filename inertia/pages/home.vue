@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 interface ContainerInfo {
   id: string
   name: string
@@ -27,7 +26,7 @@ onMounted(() => {
   subscription = instance.subscription('container')
   subscription.create().then(() => {
     subscription?.onMessage((data: { id: string; state: string }) => {
-      const target = containers.value.find(c => c.id === data.id)
+      const target = containers.value.find((c) => c.id === data.id)
       if (target) {
         target.state = data.state
       }
@@ -59,11 +58,7 @@ const stopContainer = async (id: string) => {
 
   <div class="container mx-auto p-4">
     <PwaInstall />
-    <button
-      @click="router.post('/logout')"
-      class="btn btn-primary mb-4 float-right"
-      type="button"
-    >
+    <button @click="router.post('/logout')" class="btn btn-primary mb-4 float-right" type="button">
       Se deconnecter
     </button>
     <h1 class="text-3xl font-bold text-center my-6">Mes conteneurs Docker</h1>
@@ -91,11 +86,7 @@ const stopContainer = async (id: string) => {
             >
               Démarrer
             </button>
-            <button
-              v-else
-              @click="stopContainer(item.id)"
-              class="btn btn-error btn-sm"
-            >
+            <button v-else @click="stopContainer(item.id)" class="btn btn-error btn-sm">
               Arrêter
             </button>
           </div>
