@@ -1,3 +1,8 @@
+export interface PgTables {
+  tablename: string
+  schemaname: string
+}
+
 export interface Users {
   id: string
   name: string
@@ -6,5 +11,6 @@ export interface Users {
 }
 
 export interface DB {
+  pg_tables: PgTables
   users: Users
 }
