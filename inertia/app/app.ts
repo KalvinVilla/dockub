@@ -6,6 +6,7 @@ import { createSSRApp, h } from 'vue'
 import type { DefineComponent } from 'vue'
 import { createInertiaApp } from '@inertiajs/vue3'
 import { resolvePageComponent } from '@adonisjs/inertia/helpers'
+import transmitPlugin from '../plugins/transmit'
 
 import.meta.glob(['../../resources/favicon/**'])
 
@@ -26,19 +27,20 @@ createInertiaApp({
   setup({ el, App, props, plugin }) {
     createSSRApp({ render: () => h(App, props) })
       .use(plugin)
+      .use(transmitPlugin)
       .mount(el)
   },
 })
 
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker
-      .register('/sw.js')
-      .then((reg) => {
-        console.log('SW registered: ', reg)
-      })
-      .catch((err) => {
-        console.error('SW registration failed: ', err)
-      })
-  })
-}
+// if ('serviceWorker' in navigator) {
+//   window.addEventListener('load', () => {
+//     navigator.serviceWorker
+//       .register('/sw.js')
+//       .then((reg) => {
+//         console.log('SW registered: ', reg)
+//       })
+//       .catch((err) => {
+//         console.error('SW registration failed: ', err)
+//       })
+//   })
+// }

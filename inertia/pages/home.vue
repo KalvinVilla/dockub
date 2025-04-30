@@ -6,24 +6,18 @@ interface ContainerInfo {
   state: 'running' | 'exited' | string
 }
 
-import { onMounted, onUnmounted, ref } from 'vue'
+import { ref, inject, onMounted, onUnmounted} from 'vue'
 import { Head, usePage, router } from '@inertiajs/vue3'
 import PwaInstall from '~/components/pwa_install.vue'
+import type { Transmit } from '@adonisjs/transmit-client'
 
-import { Transmit } from '@adonisjs/transmit-client'
-import { v7 as randomUUID } from 'uuid'
-
-const transmit = ref<Transmit | null>(null)
+const transmit = inject<Transmit>('transmit')
 let subscription: ReturnType<Transmit['subscription']> | null = null
 
 onMounted(() => {
-  const instance = new Transmit({
-    baseUrl: window.location.origin,
-    uidGenerator: randomUUID,
-  })
-  transmit.value = instance
+  if (!transmit) return
 
-  subscription = instance.subscription('container')
+  subscription = transmit.subscription('container')
   subscription.create().then(() => {
     subscription?.onMessage((data: { id: string; state: string }) => {
       const target = containers.value.find((c) => c.id === data.id)
@@ -35,10 +29,8 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  if (subscription) {
-    subscription.delete()
-    subscription = null
-  }
+  subscription?.delete()
+  subscription = null
 })
 
 const page = usePage<{ container: ContainerInfo[] }>().props
@@ -49,7 +41,7 @@ const startContainer = async (id: string) => {
 }
 
 const stopContainer = async (id: string) => {
-  await router.post(`/container/${id}/stop`)
+  router.post(`/container/${id}/stop`)
 }
 </script>
 
