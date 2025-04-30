@@ -1,4 +1,5 @@
 <script setup lang="ts">
+
 interface ContainerInfo {
   id: string
   name: string
@@ -7,6 +8,7 @@ interface ContainerInfo {
 }
 
 import { Head, usePage, router } from '@inertiajs/vue3'
+import PwaInstall from '~/components/pwa_install.vue'
 
 const page = usePage<{ container: ContainerInfo[] }>().props
 const containers = page.container
@@ -24,6 +26,7 @@ const stopContainer = async (id: string) => {
   <Head title="Docker Manager" />
 
   <div class="container mx-auto p-4">
+    <PwaInstall />
     <button
       @click="router.post('/logout')"
       class="btn btn-primary mb-4 float-right"

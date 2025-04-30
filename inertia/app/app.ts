@@ -7,7 +7,9 @@ import type { DefineComponent } from 'vue'
 import { createInertiaApp } from '@inertiajs/vue3'
 import { resolvePageComponent } from '@adonisjs/inertia/helpers'
 
-const appName = import.meta.env.VITE_APP_NAME || 'AdonisJS'
+import.meta.glob(['../../resources/favicon/**'])
+
+const appName = import.meta.env.VITE_APP_NAME || 'Dockhub'
 
 createInertiaApp({
   progress: { color: '#5468FF' },
@@ -27,3 +29,16 @@ createInertiaApp({
       .mount(el)
   },
 })
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('/sw.js')
+      .then((reg) => {
+        console.log('SW registered: ', reg)
+      })
+      .catch((err) => {
+        console.error('SW registration failed: ', err)
+      })
+  })
+}
