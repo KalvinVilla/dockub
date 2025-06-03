@@ -7,21 +7,23 @@
 
     <meta property="og:type" content="website" />
 
-    <link rel="manifest" href="{{ asset('resources/favicon/manifest.webmanifest') }}" />
+    <link rel="manifest" href="manifest.webmanifest">
     <link
       rel="icon"
       type="image/png"
-      href="{{ asset('resources/favicon/favicon-96x96.png') }}"
+      href="favicon/favicon-96x96.png"
       sizes="96x96"
     />
-    <link rel="icon" type="image/svg+xml" href="{{ asset('resources/favicon/favicon.svg') }}" />
-    <link rel="shortcut icon" href="{{ asset('resources/favicon/favicon.ico') }}" />
-    <link
-      rel="apple-touch-icon"
-      sizes="180x180"
-      href="{{ asset('resources/favicon/apple-touch-icon.png') }}"
-    />
+    <link rel="icon" type="image/svg+xml" href="favicon/favicon.svg" />
+    <link rel="shortcut icon" href="favicon.ico" />
+
     <meta name="apple-mobile-web-app-title" content="Dockerhub" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+
+    <link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png" />
+
+
 
     <title inertia>
       Dockhub
@@ -30,6 +32,7 @@
     @vite(['inertia/app/app.ts', `inertia/pages/${page.component}.vue`])
     @inertiaHead()
     @stack('dumper')
+
   </head>
 
   <body class="min-h-screen w-screen font-sans">

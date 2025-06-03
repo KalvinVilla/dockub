@@ -7,12 +7,23 @@ interface ContainerInfo {
 }
 
 import { ref, inject, onMounted, onUnmounted} from 'vue'
-import { Head, usePage, router } from '@inertiajs/vue3'
-import PwaInstall from '~/components/pwa_install.vue'
+import { Head, usePage, router, useForm, Link } from '@inertiajs/vue3'
 import type { Transmit } from '@adonisjs/transmit-client'
+
+const form = useForm({})
 
 const transmit = inject<Transmit>('transmit')
 let subscription: ReturnType<Transmit['subscription']> | null = null
+
+const submit = () => {
+  form.post('/send', {
+    onFinish: () => form.reset(),
+    onError: (errors) => {
+      console.error(errors)
+    },
+  })
+
+}
 
 onMounted(() => {
   if (!transmit) return
@@ -49,7 +60,7 @@ const stopContainer = async (id: string) => {
   <Head title="Docker Manager" />
 
   <div class="container mx-auto p-4">
-    <PwaInstall />
+    <Link href="/profile" class="bg-blue-500 text-white px-4 py-2 rounded">Profile</Link>
     <button @click="router.post('/logout')" class="btn btn-primary mb-4 float-right" type="button">
       Se deconnecter
     </button>
@@ -86,4 +97,5 @@ const stopContainer = async (id: string) => {
       </div>
     </div>
   </div>
+
 </template>

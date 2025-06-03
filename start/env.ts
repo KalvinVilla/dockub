@@ -18,6 +18,9 @@ export default await Env.create(new URL('../', import.meta.url), {
   HOST: Env.schema.string({ format: 'host' }),
   LOG_LEVEL: Env.schema.string(),
 
+  VAPID_PUBLIC_KEY: Env.schema.string(),
+  VAPID_PRIVATE_KEY: Env.schema.string(),
+
   /*
   |----------------------------------------------------------
   | Variables for configuring session package

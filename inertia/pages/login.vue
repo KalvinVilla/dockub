@@ -2,6 +2,8 @@
 import { Head } from '@inertiajs/vue3'
 import { useForm } from '@inertiajs/vue3'
 
+import PwaInstallPrompt from '~/components/pwa_install.vue'
+
 const form = useForm({
   name: '',
   password: '',
@@ -15,6 +17,9 @@ const submit = () => {
     },
   })
 }
+
+
+
 </script>
 
 <template>
@@ -47,4 +52,6 @@ const submit = () => {
       </div>
     </form>
   </div>
+
+  <PwaInstallPrompt />
 </template>

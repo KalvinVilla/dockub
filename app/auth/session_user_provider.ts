@@ -35,6 +35,10 @@ export class SessionKyselyUserProvider implements SessionUserProviderContract<Us
       email: userRecord.email,
       name: userRecord.name,
       password: userRecord.password,
+      notificationEnabled: userRecord.notification_enabled,
+      notificationEndpoint: userRecord.notification_endpoint,
+      notificationP256dh: userRecord.notification_p256dh,
+      notificationAuth: userRecord.notification_auth,
     })
 
     return this.createUserForGuard(user)

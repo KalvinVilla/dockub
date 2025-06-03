@@ -1,58 +1,90 @@
+<!-- resources/js/Components/PwaInstallPrompt.vue -->
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { ref, onMounted } from 'vue'
 
+// Shared states
+const isIos = ref(false)
+const isInStandaloneMode = ref(false)
 const showPrompt = ref(false)
-let deferredPrompt: Event | null = null
+const isManualPrompt = ref(false)
 
-onMounted(() => {
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault()
-    deferredPrompt = e
-    showPrompt.value = true
-  })
-})
+const deferredPrompt = ref<Event | null>(null)
 
-const installApp = async () => {
-  if (!deferredPrompt) return
-  ;(deferredPrompt as any).prompt()
-  const { outcome } = await (deferredPrompt as any).userChoice
-  if (outcome === 'accepted') {
+const detectiOS = () => {
+  const userAgent = window.navigator.userAgent.toLowerCase()
+  console.log('User Agent:', userAgent)
+  return /iphone|ipad|ipod/.test(userAgent)
+}
+
+const detectStandalone = () => {
+  return window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone
+}
+
+const installPWA = async () => {
+  if (deferredPrompt.value && 'prompt' in deferredPrompt.value) {
+    const promptEvent = deferredPrompt.value as any
+    promptEvent.prompt()
+    const { outcome } = await promptEvent.userChoice
+    if (outcome === 'accepted') {
+      console.log('PWA installed')
+    }
     showPrompt.value = false
-    deferredPrompt = null
+    deferredPrompt.value = null
   }
 }
+
+const closePrompt = () => {
+  showPrompt.value = false
+}
+
+onMounted(() => {
+  isIos.value = detectiOS()
+  isInStandaloneMode.value = detectStandalone()
+
+  // iOS: show prompt manually
+  if (isIos.value && !isInStandaloneMode.value) {
+    showPrompt.value = true
+    isManualPrompt.value = true
+  }
+
+  // Android: use native prompt
+  window.addEventListener('beforeinstallprompt', (e: Event) => {
+    e.preventDefault()
+    deferredPrompt.value = e
+    showPrompt.value = true
+    isManualPrompt.value = false
+  })
+
+  // Hide if already installed
+  window.addEventListener('appinstalled', () => {
+    showPrompt.value = false
+    deferredPrompt.value = null
+  })
+
+})
 </script>
 
 <template>
-  <div v-if="showPrompt" class="fixed bottom-4 inset-x-0 flex justify-center z-50">
-    <div
-      class="bg-white shadow-xl rounded-lg px-6 py-4 flex items-center space-x-4 border border-gray-300 animate-fade-in"
-    >
-      <div class="text-gray-800 font-medium">
-        <span>Installer cette application ?</span>
-      </div>
-      <button
-        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-        @click="installApp"
-      >
-        Installer
-      </button>
+  <div
+    v-if="showPrompt"
+    class="fixed inset-0 bg-black/50 flex justify-center items-center z-50"
+  >
+    <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+      <template v-if="isManualPrompt">
+        <h2 class="text-xl font-bold mb-2">Install this app</h2>
+        <p class="text-gray-700 mb-4">
+          Tap <span class="font-bold">Share</span> then <span class="font-bold">“Add to Home Screen”</span> to install this app on your iPhone or iPad.
+        </p>
+      </template>
+
+      <template v-else>
+        <h2 class="text-xl font-bold mb-2">Install this app?</h2>
+        <p class="text-gray-700 mb-4">Add this app to your home screen for a better experience.</p>
+        <div class="flex justify-end space-x-2">
+          <button @click="closePrompt" class="px-4 py-2 border rounded text-gray-700">Not now</button>
+          <button @click="installPWA" class="px-4 py-2 bg-blue-600 text-white rounded">Install</button>
+        </div>
+      </template>
     </div>
   </div>
 </template>
-
-<style scoped>
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-.animate-fade-in {
-  animation: fade-in 0.3s ease-out;
-}
-</style>

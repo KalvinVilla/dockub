@@ -19,6 +19,10 @@ export default async function seed(db: Kysely<DB>) {
       name: name,
       email,
       password: hashedPassword,
+      notification_enabled: 0,
+      notification_auth: '',
+      notification_endpoint: '',
+      notification_p256dh: '',
     })
     .returning('id')
     .executeTakeFirstOrThrow()
