@@ -7,27 +7,14 @@ interface ContainerInfo {
 }
 
 import { ref, inject, onMounted, onUnmounted} from 'vue'
-import { Head, usePage, router, useForm, Link } from '@inertiajs/vue3'
+import { Head, usePage, router, Link } from '@inertiajs/vue3'
 import type { Transmit } from '@adonisjs/transmit-client'
-
-const form = useForm({})
 
 const transmit = inject<Transmit>('transmit')
 let subscription: ReturnType<Transmit['subscription']> | null = null
 
-const submit = () => {
-  form.post('/send', {
-    onFinish: () => form.reset(),
-    onError: (errors) => {
-      console.error(errors)
-    },
-  })
-
-}
-
 onMounted(() => {
   if (!transmit) return
-
   subscription = transmit.subscription('container')
   subscription.create().then(() => {
     subscription?.onMessage((data: { id: string; state: string }) => {

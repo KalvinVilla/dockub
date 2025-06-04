@@ -19,16 +19,17 @@ self.addEventListener('push', function (event) {
   }
 })
 
-
 self.addEventListener('notificationclick', function (event) {
   event.notification.close()
   event.waitUntil(clients.openWindow('/'))
 })
 
-self.addEventListener('install', () => {
-  console.log('Service Worker installé');
-});
+// self.addEventListener('install', (event) => {
+//   console.log('Service Worker installé');
+//     console.log(event)
+// });
 
-self.addEventListener('activate', () => {
-  console.log('Service Worker activé');
-});
+// self.addEventListener('activate', (event) => {
+//   console.log('Service Worker activé');
+//   console.log(event)
+// });

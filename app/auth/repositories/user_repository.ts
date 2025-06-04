@@ -21,7 +21,7 @@ export class UserRepository {
     return this
   }
 
-  async all(value: object) {
+  async all(value: any) {
     const userRecords = await db
       .selectFrom('users')
       .selectAll()

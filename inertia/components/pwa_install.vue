@@ -12,7 +12,6 @@ const deferredPrompt = ref<Event | null>(null)
 
 const detectiOS = () => {
   const userAgent = window.navigator.userAgent.toLowerCase()
-  console.log('User Agent:', userAgent)
   return /iphone|ipad|ipod/.test(userAgent)
 }
 
@@ -35,11 +34,28 @@ const installPWA = async () => {
 
 const closePrompt = () => {
   showPrompt.value = false
+  window.localStorage.setItem('ignore_pwa', 'false')
 }
 
 onMounted(() => {
   isIos.value = detectiOS()
   isInStandaloneMode.value = detectStandalone()
+  const isFirefox = navigator.userAgent.toLowerCase().includes('firefox')
+  const ignore_pwa = window.localStorage.getItem('ignore_pwa')
+
+  if (ignore_pwa) {
+    showPrompt.value = false
+    return
+  }
+
+  if (isFirefox) {
+    if (!isInStandaloneMode.value) {
+      showPrompt.value = true
+      isManualPrompt.value = true
+    } else {
+      showPrompt.value = false
+    }
+  }
 
   // iOS: show prompt manually
   if (isIos.value && !isInStandaloneMode.value) {
@@ -75,6 +91,9 @@ onMounted(() => {
         <p class="text-gray-700 mb-4">
           Tap <span class="font-bold">Share</span> then <span class="font-bold">“Add to Home Screen”</span> to install this app on your iPhone or iPad.
         </p>
+         <div class="flex justify-end space-x-2">
+          <button @click="closePrompt" class="px-4 py-2 border rounded text-gray-700">Not now</button>
+        </div>
       </template>
 
       <template v-else>

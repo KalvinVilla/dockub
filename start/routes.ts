@@ -9,7 +9,6 @@
 
 import router from '@adonisjs/core/services/router'
 import { middleware } from '#start/kernel'
-import transmit from '@adonisjs/transmit/services/main'
 
 const LoginController = () => import('#auth/controllers/login_controller')
 const LogoutController = () => import('#auth/controllers/logout_controller')
@@ -17,8 +16,6 @@ const HomeController = () => import('#user/controllers/home_controller')
 const ProfileController = () => import('#user/controllers/profile_controller')
 
 const ContainerController = () => import('#container/controllers/container_controller')
-
-transmit.registerRoutes()
 
 router
   .group(() => {
