@@ -1,8 +1,6 @@
-<!-- resources/js/Components/PwaInstallPrompt.vue -->
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 
-// Shared states
 const isIos = ref(false)
 const isInStandaloneMode = ref(false)
 const showPrompt = ref(false)
@@ -57,13 +55,15 @@ onMounted(() => {
     }
   }
 
-  // iOS: show prompt manually
   if (isIos.value && !isInStandaloneMode.value) {
     showPrompt.value = true
     isManualPrompt.value = true
   }
 
-  // Android: use native prompt
+
+  /**
+   * Only work on Chrome, Edge, and other Chromium-based browsers
+   */
   window.addEventListener('beforeinstallprompt', (e: Event) => {
     e.preventDefault()
     deferredPrompt.value = e
@@ -71,7 +71,9 @@ onMounted(() => {
     isManualPrompt.value = false
   })
 
-  // Hide if already installed
+  /**
+   * Only work on Chrome, Edge, and other Chromium-based browsers
+   */
   window.addEventListener('appinstalled', () => {
     showPrompt.value = false
     deferredPrompt.value = null

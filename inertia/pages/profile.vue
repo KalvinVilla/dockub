@@ -6,10 +6,9 @@ import { ref } from 'vue'
 const page = usePage<{ user: { email: string, notificationEnabled: boolean, notificationEndpoint: string, notificationP256dh: string, notificationAuth: string }, publicKey: string }>().props
 const user = ref(page.user)
 const publicKey = ref(page.publicKey)
-const logs = ref<string[]>([])
-function log(msg: string) {
-  logs.value.push(msg)
-}
+const { success } = usePage().props
+
+const errorMessage = ref('')
 
 const form = useForm({
   email: user.value.email,
@@ -24,11 +23,9 @@ const form = useForm({
 })
 
 async function subscribeToPushNotifications() {
-  log('Abonnement push en cours...')
   const registration = await navigator.serviceWorker.register('sw.js')
 
   if (form.subscription.endpoint && form.subscription.keys.p256dh && form.subscription.keys.auth) {
-    log('L abonnement push existe déjà:' + form.subscription.endpoint)
     return
   }
   try {
@@ -37,18 +34,13 @@ async function subscribeToPushNotifications() {
       applicationServerKey: urlBase64ToUint8Array(publicKey.value),
     })
 
-  log('Abonnement push réussi:' + JSON.stringify(subscription))
-
   form.subscription.endpoint = subscription.endpoint
   // @ts-ignore
   form.subscription.keys.p256dh = subscription.toJSON().keys.p256dh
   // @ts-ignore
   form.subscription.keys.auth = subscription.toJSON().keys.auth
-  console.log('Abonnement push enregistré avec succès.')
-    console.log('Abonnement réussi', subscription)
   } catch (err) {
     console.error('Erreur abonnement push', err)
-    log(`Erreur abonnement push` + JSON.stringify(err))
   }
 
 }
@@ -63,24 +55,25 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
 const submit = async () => {
 
   if (form.hasEnableNotification) {
-    // if ('serviceWorker' in navigator && 'PushManager' in window) {
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
       const permission = await Notification.requestPermission()
-        console.log('Permission pour les notifications:', permission)
-      if (permission === 'granted') {
-        log('Permission pour les notifications.')
+      if (permission !== 'granted') {
+          errorMessage.value = 'Notifications non autorisées. Veuillez autoriser les notifications dans les paramètres de votre navigateur.'
+          return
+        }
         await subscribeToPushNotifications()
-      }
-    // } else {
-    //   log('Push API non supportée par ce navigateur.')
-    // }
+    } else {
+      errorMessage.value = 'Push notifications are not supported in this browser.'
+      return
+    }
   } else {
-    log('Notifications désactivées')
     form.subscription.endpoint = ''
     form.subscription.keys.p256dh = ''
     form.subscription.keys.auth = ''
   }
 
   form.post('/profile', {
+    preserveState: false,
     onFinish: () => form.reset(),
     onError: (errors) => {
       console.error(errors)
@@ -104,10 +97,6 @@ const toggleAdvancedOptions = () => {
 
   <div class="container mx-auto p-4">
   <Link href="/" class="bg-blue-500 text-white px-4 py-2 rounded">Home</Link><br /><br />
-  <button onclick="Notification.requestPermission().then(p => alert(p))">
-  Activer les notifications
-</button>
-  <div v-for="message in logs">{{ message }}</div>
   <form @submit.prevent="submit" class="mt-4">
     <label for="email" class="block text mb-2">Email</label>
     <input
@@ -154,6 +143,10 @@ const toggleAdvancedOptions = () => {
         class="border rounded px-3 py-2 w-full mb-4"
       />
     </div>
+    <div v-if="errorMessage" class="text-red-500 mb-4">{{ errorMessage }}</div>
+    <div v-if="success" class="mb-4 p-2 bg-green-100 text-green-800 rounded">
+  {{ success }}
+</div>
     <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Update</button>
   </form>
   </div>

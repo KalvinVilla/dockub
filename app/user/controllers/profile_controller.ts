@@ -23,11 +23,7 @@ export default class ProfileController {
   )
 
   async render({ inertia, auth }: HttpContext) {
-    if (!auth.user) {
-      return inertia.render('login')
-    }
-
-    const user = await this.userRepository.where('id').find(auth.user.getIdentifier().toString())
+    const user = await this.userRepository.where('id').find(auth.user!.getIdentifier().toString())
 
     if (!user) {
       return inertia.render('login')
@@ -44,20 +40,16 @@ export default class ProfileController {
       publicKey: env.get('VAPID_PUBLIC_KEY'),
     })
   }
-  async execute({ request, response, auth }: HttpContext) {
+  async execute({ request, response, auth, session }: HttpContext) {
     const { email, hasEnableNotification, subscription } = await request.validateUsing(
       ProfileController.validator
     )
-
-    if (!auth.user) {
-      return response.redirect().back()
-    }
 
     if (hasEnableNotification) {
       if (subscription.endpoint && subscription.keys) {
         if (subscription.keys.p256dh && subscription.keys.auth) {
           this.userRepository.updateProfile({
-            id: auth.user?.getIdentifier().toString(),
+            id: auth.user!.getIdentifier().toString(),
             email: email,
             // @ts-ignore (this is a number between 0 and 1)
             notificationEnabled: +hasEnableNotification,
@@ -65,13 +57,14 @@ export default class ProfileController {
             notificationP256dh: subscription.keys.p256dh,
             notificationAuth: subscription.keys.auth,
           })
+          session.flash('success', 'Profile updated successfully')
           return response.redirect().back()
         }
       }
     }
 
     this.userRepository.updateProfile({
-      id: auth.user?.getIdentifier().toString(),
+      id: auth.user!.getIdentifier().toString(),
       email: email,
       // @ts-ignore (this is a number between 0 and 1)
       notificationEnabled: 0,
@@ -79,6 +72,8 @@ export default class ProfileController {
       notificationP256dh: '',
       notificationAuth: '',
     })
+
+    session.flash('success', 'Profile updated successfully')
 
     return response.redirect().back()
   }

@@ -24,7 +24,7 @@ export default class LoginController {
 
     if (!user) {
       session.flashErrors({
-        E_INVALID_CREDENTIALS: "Aucun compte n'a été trouvé avec les identifiants fournis.",
+        E_INVALID_CREDENTIALS: 'Invalid credentials provided.',
       })
 
       return response.redirect().back()
