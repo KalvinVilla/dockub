@@ -17,6 +17,12 @@ export default class NotificationService {
     payload: { title: string; body: string },
     containerState: { id: string; state: string }
   ) {
+    transmit.broadcast('container', {
+      id: containerState.id,
+      state: containerState.state,
+      message: payload,
+    })
+
     const userRecords = await this.userRepository.where('notification_enabled').all(1)
 
     userRecords.forEach(async (userRecord) => {
@@ -24,12 +30,7 @@ export default class NotificationService {
 
       const isOnline = this.isUserOnline(email)
       if (isOnline) {
-        transmit.broadcast('container', {
-          id: containerState.id,
-          state: containerState.state,
-          message: payload,
-        })
-        this.logger.debug(`Transmitted to ${email}`)
+        return
       } else {
         if (!notificationEndpoint || !notificationP256dh || !notificationAuth) {
           this.logger.warn(`Skipping user ${email} due to missing subscription details`)
@@ -37,7 +38,7 @@ export default class NotificationService {
         }
 
         webPush.setVapidDetails(
-          'mailto:admin@example.com',
+          env.get('WEB_PUSH_SUBJECT'),
           env.get('VAPID_PUBLIC_KEY'),
           env.get('VAPID_PRIVATE_KEY')
         )

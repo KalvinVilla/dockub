@@ -18,6 +18,7 @@ export default await Env.create(new URL('../', import.meta.url), {
   HOST: Env.schema.string({ format: 'host' }),
   LOG_LEVEL: Env.schema.string(),
 
+  WEB_PUSH_SUBJECT: Env.schema.string({ format: 'url' }),
   VAPID_PUBLIC_KEY: Env.schema.string(),
   VAPID_PRIVATE_KEY: Env.schema.string(),
 

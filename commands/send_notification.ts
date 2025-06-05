@@ -27,7 +27,7 @@ export default class Seed extends BaseCommand {
       .execute()
 
     webPush.setVapidDetails(
-      'mailto:admin@example.com',
+      env.get('WEB_PUSH_SUBJECT'),
       env.get('VAPID_PUBLIC_KEY'),
       env.get('VAPID_PRIVATE_KEY')
     )
@@ -38,10 +38,6 @@ export default class Seed extends BaseCommand {
     })
 
     for (const userRecord of userRecords) {
-      this.logger.info(
-        `Sending notification to ${userRecord.email}... to endpoint ${userRecord.notification_endpoint}`
-      )
-
       const subscription = {
         endpoint: userRecord.notification_endpoint,
         keys: {
