@@ -1,0 +1,29 @@
+{
+  "name": "Dockerhub",
+  "short_name": "Dockerhub",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "./favicon/web-app-manifest-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./favicon/web-app-manifest-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "./favicon/web-app-manifest-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "label": "Dockerhub"
+    }
+  ],
+  "theme_color": "#000000",
+  "background_color": "#000000",
+  "gcm_sender_id": "103953800507",
+  "display": "standalone"
+}

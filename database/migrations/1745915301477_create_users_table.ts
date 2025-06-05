@@ -9,6 +9,10 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn('name', 'text', (col) => col.notNull())
     .addColumn('email', 'text', (col) => col.notNull().unique())
     .addColumn('password', 'text', (col) => col.notNull())
+    .addColumn('notification_enabled', 'boolean', (col) => col.notNull().defaultTo(false))
+    .addColumn('notification_endpoint', 'text')
+    .addColumn('notification_p256dh', 'text')
+    .addColumn('notification_auth', 'text')
     .execute()
 }
 

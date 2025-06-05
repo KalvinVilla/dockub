@@ -8,7 +8,7 @@ import { createInertiaApp } from '@inertiajs/vue3'
 import { resolvePageComponent } from '@adonisjs/inertia/helpers'
 import transmitPlugin from '../plugins/transmit'
 
-import.meta.glob(['../../resources/favicon/**'])
+import.meta.glob(['../../resources/favicon/**', '../../resources/manifest.webmanifest'])
 
 const appName = import.meta.env.VITE_APP_NAME || 'Dockhub'
 
@@ -32,15 +32,22 @@ createInertiaApp({
   },
 })
 
-// if ('serviceWorker' in navigator) {
-//   window.addEventListener('load', () => {
-//     navigator.serviceWorker
-//       .register('/sw.js')
-//       .then((reg) => {
-//         console.log('SW registered: ', reg)
-//       })
-//       .catch((err) => {
-//         console.error('SW registration failed: ', err)
-//       })
-//   })
-// }
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('sw.js')
+      .then((reg) => {
+        console.log('SW registered: ', reg)
+        if (reg.installing) {
+          console.log('Service worker installing')
+        } else if (reg.waiting) {
+          console.log('Service worker installed')
+        } else if (reg.active) {
+          console.log('Service worker active')
+        }
+      })
+      .catch((err) => {
+        console.error('SW registration failed: ', err)
+      })
+  })
+}

@@ -6,6 +6,10 @@ interface Properties {
   email: string
   name: string
   password: string | null
+  notificationEnabled: 0 | 1
+  notificationEndpoint: string | null
+  notificationP256dh: string | null
+  notificationAuth: string | null
 }
 
 export class User extends Entity<Properties> {

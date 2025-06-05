@@ -10,37 +10,26 @@ export default defineConfig({
   plugins: [
     inertia({ ssr: { enabled: true, entrypoint: 'inertia/app/ssr.ts' } }),
     vue(),
+
     VitePWA({
       registerType: 'prompt',
       injectRegister: 'auto',
-      strategies: 'generateSW',
+      strategies: 'injectManifest',
+      srcDir: 'public',
+      filename: 'sw.js',
+      devOptions: {
+        enabled: true,
+        type: 'module',
+      },
       base: '/',
       scope: '/',
-      filename: 'sw.js',
       injectManifest: {
+        injectionPoint: undefined,
+        globDirectory: 'public',
         globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
       },
+      manifestFilename: 'assets/manifest.webmanifest', // TODO update this to match structure
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
-      manifest: {
-        name: 'Docker Manager',
-        short_name: 'DockerCtrl',
-        theme_color: '#0f172a',
-        background_color: '#ffffff',
-        display: 'standalone',
-        start_url: '/',
-        icons: [
-          {
-            src: '/favicon/web-app-manifest-192x192.png',
-            sizes: '192x192',
-            type: 'image/png',
-          },
-          {
-            src: '/favicon/web-app-manifest-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-          },
-        ],
-      },
     }),
     adonisjs({ entrypoints: ['inertia/app/app.ts'], reload: ['resources/views/**/*.edge'] }),
     tailwindcss(),

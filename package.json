@@ -48,6 +48,7 @@
     "@types/better-sqlite3": "^7.6.13",
     "@types/luxon": "^3.6.2",
     "@types/node": "^22.13.2",
+    "@types/web-push": "^3.6.4",
     "@vitejs/plugin-vue": "^5.2.3",
     "daisyui": "^5.0.28",
     "eslint": "^9.20.1",
@@ -57,7 +58,8 @@
     "ts-node-maintained": "^10.9.5",
     "typescript": "~5.7.3",
     "vite": "^6.1.0",
-    "vite-plugin-pwa": "^1.0.0"
+    "vite-plugin-pwa": "^1.0.0",
+    "vite-plugin-static-copy": "^2.3.1"
   },
   "dependencies": {
     "@adonisjs/auth": "^9.3.1",
@@ -83,7 +85,8 @@
     "reflect-metadata": "^0.2.2",
     "tailwindcss": "^4.1.4",
     "uuid": "^11.1.0",
-    "vue": "^3.5.13"
+    "vue": "^3.5.13",
+    "web-push": "^3.6.7"
   },
   "hotHook": {
     "boundaries": [
