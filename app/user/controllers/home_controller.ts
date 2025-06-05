@@ -1,4 +1,4 @@
-import { listContainers } from '#start/docker'
+import { groupContainersWorkingDir } from '#start/docker'
 import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
 
@@ -7,16 +7,20 @@ export default class HomeController {
   constructor() {}
 
   async render({ inertia }: HttpContext) {
-    const rawContainers = await listContainers()
+    const grouped = await groupContainersWorkingDir()
 
-    // TODO Move to a view model
-    const containers = rawContainers.map((container: any) => ({
-      id: container.Id,
-      name: container.Names[0]?.replace('/', '') || 'unknown',
-      image: container.Image,
-      state: container.State,
-      status: container.Status,
+    // TODO : Move to view model
+    const groups = (Object.entries(grouped) as [string, any[]][]).map(([appName, containers]) => ({
+      appName,
+      containers: containers.map((container) => ({
+        id: container.Id,
+        name: container.Names[0]?.replace('/', '') || 'unknown',
+        image: container.Image,
+        state: container.State,
+        status: container.Status,
+      })),
     }))
-    return inertia.render('home', { container: containers })
+
+    return inertia.render('home', { groups })
   }
 }
