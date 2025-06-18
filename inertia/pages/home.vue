@@ -12,8 +12,10 @@ interface Group {
 }
 
 import { ref, inject, onMounted, onUnmounted} from 'vue'
-import { Head, usePage, router, Link } from '@inertiajs/vue3'
+import { Head, usePage, router } from '@inertiajs/vue3'
 import type { Transmit } from '@adonisjs/transmit-client'
+
+import Header from '~/components/header.vue'
 
 const transmit = inject<Transmit>('transmit')
 let subscription: ReturnType<Transmit['subscription']> | null = null
@@ -61,53 +63,51 @@ const restartGroup = (group: Group) => {
 
 <template>
   <Head title="Docker Manager" />
+  <div class="min-h-screen w-full bg-gradient-to-br from-blue-50 to-blue-200 flex flex-col">
+    <!-- Header -->
+    <Header />
 
-  <div class="container mx-auto p-4">
-    <Link href="/profile" class="bg-blue-500 text-white px-4 py-2 rounded">Profile</Link>
-    <button @click="router.post('/logout')" class="btn btn-primary mb-4 float-right" type="button">
-      Se déconnecter
-    </button>
-    <h1 class="text-3xl font-bold text-center my-6">Mes applications Docker Compose</h1>
-
-    <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-      <div
-        v-for="(group, gidx) in groups"
-        :key="gidx"
-        class="card shadow-xl bg-base-100 border"
-      >
-        <div class="card-body">
-          <div class="flex items-center justify-between">
-            <h2 class="card-title">{{ group.appName }}</h2>
-            <!-- Bouton restart si au moins un container n'est pas running -->
+    <!-- Main grid -->
+    <main class="flex-1 w-full px-6 py-8">
+      <div class="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 w-full">
+        <div
+          v-for="(group, gidx) in groups"
+          :key="gidx"
+          class="bg-white/80 border border-blue-100 rounded-xl shadow p-6 flex flex-col"
+        >
+          <div class="flex items-center justify-between mb-2">
+            <h2 class="text-xl font-bold text-blue-800">{{ group.appName }}</h2>
             <button
               v-if="group.containers.some(c => c.state !== 'running')"
               @click="restartGroup(group)"
-              class="btn btn-warning btn-xs"
+              class="bg-blue-200 hover:bg-blue-300 text-blue-900 font-semibold px-3 py-1 rounded-lg shadow transition flex items-center gap-1 text-sm"
               title="Redémarrer tous les containers arrêtés"
             >
-              <span class="material-icons text-base align-middle">restart_alt</span>
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582M20 20v-5h-.581M5.5 19A9 9 0 1119 5.5" />
+              </svg>
               Restart
             </button>
           </div>
-          <div class="flex flex-wrap gap-2 mt-2">
+          <div class="flex flex-wrap gap-2 mb-4">
             <span
               v-for="container in group.containers"
               :key="container.id"
-              class="px-2 py-1 rounded text-xs"
+              class="px-2 py-1 rounded-full text-xs font-semibold"
               :class="container.state === 'running' ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'"
             >
               {{ container.name }}
             </span>
           </div>
-          <div class="mt-4 space-y-2">
+          <div class="space-y-3">
             <div
               v-for="container in group.containers"
               :key="container.id"
-              class="border rounded p-2 flex items-center justify-between"
+              class="bg-white border border-blue-100 rounded-lg p-3 flex items-center justify-between shadow-sm"
             >
               <div>
-                <div class="font-semibold">{{ container.name }}</div>
-                <div class="text-xs text-gray-500">{{ container.image }}</div>
+                <div class="font-semibold text-blue-900">{{ container.name }}</div>
+                <div class="text-xs text-gray-500 mb-1">{{ container.image }}</div>
                 <div>
                   <strong>État:</strong>
                   <span :class="container.state === 'running' ? 'text-green-600' : 'text-red-600'">
@@ -119,14 +119,14 @@ const restartGroup = (group: Group) => {
                 <button
                   v-if="container.state !== 'running'"
                   @click="startContainer(container.id)"
-                  class="btn btn-success btn-xs"
+                  class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg shadow text-xs font-semibold transition"
                 >
                   Démarrer
                 </button>
                 <button
                   v-else
                   @click="stopContainer(container.id)"
-                  class="btn btn-error btn-xs"
+                  class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg shadow text-xs font-semibold transition"
                 >
                   Arrêter
                 </button>
@@ -135,6 +135,6 @@ const restartGroup = (group: Group) => {
           </div>
         </div>
       </div>
-    </div>
+    </main>
   </div>
 </template>
