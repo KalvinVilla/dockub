@@ -49,7 +49,7 @@ export async function startContainer(id: string) {
     const info = await container.inspect()
     const newState = info.State.Status
 
-    return { id, state: newState }
+    return { id, state: newState, name: info.Name.replace('/', '') }
   } catch (error) {
     return { id, state: 'error' }
   }
@@ -62,7 +62,7 @@ export async function stopContainer(id: string) {
     const info = await container.inspect()
     const newState = info.State.Status
 
-    return { id, state: newState }
+    return { id, state: newState, name: info.Name.replace('/', '') }
   } catch (error) {
     return { id, state: 'error' }
   }
