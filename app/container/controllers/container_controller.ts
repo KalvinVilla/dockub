@@ -7,28 +7,28 @@ import type { HttpContext } from '@adonisjs/core/http'
 export default class ContainerController {
   constructor(private notificationService: NotificationService) {}
 
-  async start({ response, params }: HttpContext) {
+  async start({ response, params, auth }: HttpContext) {
     const id = params.id
 
     const containerState = await startContainer(id)
     this.notificationService.broadcast(
       {
         title: 'Container Started',
-        body: `The container with ID ${id} has been started.`,
+        body: `The container ${containerState.name} has been started by ${auth.user?.props.name}.`,
       },
       containerState
     )
     return response.redirect().back()
   }
 
-  async stop({ response, params }: HttpContext) {
+  async stop({ response, params, auth }: HttpContext) {
     const id = params.id
 
     const containerState = await stopContainer(id)
     this.notificationService.broadcast(
       {
         title: 'Container stopped',
-        body: `The container with ID ${id} has been stopped.`,
+        body: `The container ${containerState.name} has been stopped by ${auth.user?.props.name}.`,
       },
       containerState
     )

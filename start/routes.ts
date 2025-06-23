@@ -13,6 +13,8 @@ import { middleware } from '#start/kernel'
 const LoginController = () => import('#auth/controllers/login_controller')
 const LogoutController = () => import('#auth/controllers/logout_controller')
 const HomeController = () => import('#user/controllers/home_controller')
+const AdminController = () => import('#user/controllers/admin_controller')
+const StoreUserController = () => import('#user/controllers/store_user_controller')
 const ProfileController = () => import('#user/controllers/profile_controller')
 
 const ContainerController = () => import('#container/controllers/container_controller')
@@ -36,3 +38,11 @@ router
     router.post('container/:id/stop', [ContainerController, 'stop']).as('container.stop')
   })
   .middleware(middleware.auth())
+
+router
+  .group(() => {
+    router.get('/', [AdminController, 'render']).as('admin')
+    router.post('/user', [StoreUserController, 'execute']).as('admin.user.store')
+  })
+  .middleware(middleware.auth())
+  .prefix('admin')
